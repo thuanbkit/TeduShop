@@ -6,12 +6,12 @@ using System.Linq;
 
 namespace TeduShop.Data.Repositories
 {
-    public interface IProductRepository
+    public interface IProductRepository : IRepository<Product>
     {
         IEnumerable<Product> GetAlias(string alias);
     }
 
-    public class ProductRepository : RepositoryBase<Product>,IProductRepository
+    public class ProductRepository : RepositoryBase<Product>, IProductRepository
     {
         public ProductRepository(IDbFactory dbFactory) : base(dbFactory)
         {
