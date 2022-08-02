@@ -15,13 +15,15 @@ namespace TeduShop.Service
 
         IEnumerable<Post> GetALl();
 
-        IEnumerable<Post> getALLPaging(string tag, int page, int pageSize, out int totalRow);
+        IEnumerable<Post> GetALLPaging(int page, int pageSize, out int totalRow);
 
-        IEnumerable<Post> getAllByTagPaging(int page, int pageSize, out int totalRow);
+        IEnumerable<Post> GetAllByTagPaging(string tag, int page, int pageSize, out int totalRow);
 
-        Post getByID(int ID);
+        IEnumerable<Post> GetAllByCategoryPaging(int categoryId, int page, int pageSize, out int totalRow);
 
-        void saveChanges();
+        Post GetByID(int ID);
+
+        void SaveChanges();
     }
 
     public class PostService : IPostService
@@ -47,26 +49,31 @@ namespace TeduShop.Service
 
         public IEnumerable<Post> GetALl()
         {
-            return _postRepository.GetAll();
+            return _postRepository.GetAll(new string[] { "PostCategory" });
         }
 
-        public IEnumerable<Post> getAllByTagPaging(int page, int pageSize, out int totalRow)
+        public IEnumerable<Post> GetAllByCategoryPaging(int categoryId, int page, int pageSize, out int totalRow)
+        {
+            return _postRepository.GetMultiPaging(x => x.Status && x.CategoryID == categoryId, out totalRow, page, pageSize, new string[] { "PostCategory" });
+        }
+
+        public IEnumerable<Post> GetAllByTagPaging(string tag, int page, int pageSize, out int totalRow)
         {
             // Todo : select all post by tag
-            return _postRepository.GetMultiPaging(x => x.Status, out totalRow, page, pageSize);
+            return _postRepository.GetAllByTag(tag, page, pageSize, out totalRow);
         }
 
-        public IEnumerable<Post> getALLPaging(string tag, int page, int pageSize, out int totalRow)
+        public IEnumerable<Post> GetALLPaging(int page, int pageSize, out int totalRow)
         {
             return _postRepository.GetMultiPaging(x => x.Status, out totalRow, page, pageSize);
         }
 
-        public Post getByID(int ID)
+        public Post GetByID(int ID)
         {
             return _postRepository.GetSingleById(ID);
         }
 
-        public void saveChanges()
+        public void SaveChanges()
         {
             _unitOfWork.Commit();
         }
